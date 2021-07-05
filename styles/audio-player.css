@@ -107,26 +107,3 @@
 .music-info h4 {
     margin: 0;
 }
-
-.bar-container {
-    background: #fff;
-    cursor: pointer;
-    border-radius: 5px;
-    border-style: inset;
-    border-width: 1px;
-    border-color: snow;
-}
-
-.bar {
-    background-color: #fe8daa;
-    border-radius: 5px;
-    height: 100%;
-    width: 0;
-    transition: width 0.1s linear;
-}
-
-.progress-container {
-    margin: 10px 0;
-    height: 12px;
-    width: 100%;
-}

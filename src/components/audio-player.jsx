@@ -6,11 +6,10 @@ function AudioPlayer(props) {
     const [index, setIndex] = useState(0);
     const [listLen, setListLen] = useState(0);
     const [playing, setPlaying] = useState(false);
-    const [progressPercent, setProgressPercent] = useState(.0);
+    const [progress, setProgress] = useState(.0);
     const [volume, setVolume] = useState(0.3);
 
     const playerRef = useRef();
-    const progressContainer = useRef();
 
     // update audio player
     useEffect(() => {
@@ -28,7 +27,7 @@ function AudioPlayer(props) {
 
     // update volume
     useEffect(() => {
-        playerRef.current.volume = volume
+        playerRef.current.volume = volume;
     }, [volume]);
 
 
@@ -68,17 +67,23 @@ function AudioPlayer(props) {
         <div className={"music-container " + (playing ? 'play' : '')}>
             <div className={"music-info"}>
                 <h4>{props.data[index].title}</h4>
-                <div className={"bar-container progress-container"} ref={progressContainer} onClick={e => {
-                    playerRef.current.currentTime = (e.nativeEvent.offsetX / progressContainer.current.clientWidth) * playerRef.current.duration
-                }}>
-                    <div className={"bar"} style={{width: progressPercent + '%'}}/>
-                </div>
+                <Slider
+                    styles={{active: {backgroundColor: '#fe8daa'}, track: {width: "100%"}}}
+                    disabled={playerRef.current == null}
+                    axis="x"
+                    x={progress}
+                    xmax={playerRef.current == null ? 100 : playerRef.current.duration}
+                    xstep={.1}
+                    onChange={({x}) => {
+                        setProgress(x)
+                        playerRef.current.currentTime = x
+                    }}/>
             </div>
 
             <audio src={props.data[index].audio}
                    ref={playerRef}
                    autoPlay={playing}
-                   onTimeUpdate={e => setProgressPercent(100 * e.target.currentTime / e.target.duration)}
+                   onTimeUpdate={e => setProgress(e.target.currentTime)}
                    onEnded={() => changeSong(true)}/>
 
             <div className={"img-container"}>
@@ -99,13 +104,13 @@ function AudioPlayer(props) {
                     <i className={"fas fa-forward"} onClick={() => changeSong(true)}/>
                 </button>
                 <Slider
-                    styles={{active: {backgroundColor: '#fe8daa'}, track:{width: 80, margin:10}}}
+                    styles={{active: {backgroundColor: '#fe8daa'}, track: {width: 80, margin: 10}}}
                     disabled={playerRef.current == null}
                     axis="x"
                     x={volume}
                     xmax={1.0}
                     xstep={0.02}
-                    onChange={({ x }) => setVolume(x)} />
+                    onChange={({x}) => setVolume(x)}/>
                 <h4>{playerRef.current == null ? "00:00/00:00" : convertTime(playerRef.current.currentTime) + ':' + convertTime(playerRef.current.duration)}</h4>
             </div>
         </div>
